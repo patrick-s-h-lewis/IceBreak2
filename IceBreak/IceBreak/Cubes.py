@@ -50,7 +50,8 @@ def select_cube(r):
         "returning node:" + str(ind) +
         " with descendents: "+ str(sizes[ind])
     )
-    return ("/*["+str(ind+1)+"]")
+    new_node ='/*['+str(ind+1)+']'
+    return new_node
 
 
 def crush_ice(r,xp):
@@ -63,10 +64,8 @@ def crush_ice(r,xp):
     if not layer:
         xp = xp+select_cube(r)
         r = response.xpath(xp)
-        print(xp)
-        crush_ice(r,xp)
-    else:
-        return xp
+        xp = crush_ice(r,xp)
+    return xp
   
 thresholds = {
         "similarity_threshold": 0.6,
@@ -78,5 +77,5 @@ link = "http://ora.ox.ac.uk/search/detailed?q=%2A%3A%2A&truncate=450&rows=500&so
 r = requests.get(link)
 response = TextResponse(r.url, body=r.text, encoding='utf-8')
 xp = "//body"
-xp = crush_ice(response, xp)
-print(xp)
+xp2 = crush_ice(response.xpath(xp),xp)
+print(xp2)
