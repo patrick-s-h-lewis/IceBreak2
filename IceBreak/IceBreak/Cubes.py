@@ -54,7 +54,7 @@ def select_cube(r):
     return new_node
 
 
-def crush_ice(r,xp):
+def crush_ice(r,xp,thresholds,response):
     '''
     iterate through a selectors children to find data collection within it.
     Follows child with most descendents unless heuristic conditions fulfilled.
@@ -64,18 +64,14 @@ def crush_ice(r,xp):
     if not layer:
         xp = xp+select_cube(r)
         r = response.xpath(xp)
-        xp = crush_ice(r,xp)
+        xp = crush_ice(r,xp,thresholds,response)
     return xp
   
-thresholds = {
-        "similarity_threshold": 0.6,
-        "node_threshold": 50,
-        "average_similarity_threshold":0.7,
-        "proportion_threshold":0.7
-    }  
-link = "http://ora.ox.ac.uk/search/detailed?q=%2A%3A%2A&truncate=450&rows=500&sort=timestamp%20desc"
-r = requests.get(link)
-response = TextResponse(r.url, body=r.text, encoding='utf-8')
-xp = "//body"
-xp2 = crush_ice(response.xpath(xp),xp)
-print(xp2)
+def main(link,thresholds = {"similarity_threshold": 0.6,"node_threshold": 50,"average_similarity_threshold":0.7,"proportion_threshold":0.7}):
+    r = requests.get(link)
+    response = TextResponse(r.url, body=r.text, encoding='utf-8')
+    bd = "//body"
+    xp = crush_ice(response.xpath(bd),bd,thresholds,response)
+    return xp
+    
+print(main('http://ora.ox.ac.uk/search/detailed?q=%2A%3A%2A&truncate=450&rows=500&sort=timestamp%20desc'))
