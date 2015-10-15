@@ -61,19 +61,18 @@ def crush_ice(r,xp,thresholds,response):
     Follows child with most descendents unless heuristic conditions fulfilled.
     saves the data to file.
     '''
-    (layer,bsims) = layer_report(r,thresholds)
+    (layer,_) = layer_report(r,thresholds)
     if not layer:
         xp = xp+select_cube(r)
         r = response.xpath(xp)
-        (xp,true_bsims) = crush_ice(r,xp,thresholds,response)
-        bsims = true_bsims
-    return xp,bsims
+        xp = crush_ice(r,xp,thresholds,response)
+    return xp
   
-def main(link,thresholds = {"similarity_threshold": 0.6,"node_threshold": 50,"average_similarity_threshold":0.7,"proportion_threshold":0.7}):
+def main(link,thresholds = {"similarity_threshold": 0.6,"node_threshold": 10,"average_similarity_threshold":0.7,"proportion_threshold":0.7}):
     r = requests.get(link)
     response = TextResponse(r.url, body=r.text, encoding='utf-8')
     bd = "//body"
-    xp,sims = crush_ice(response.xpath(bd),bd,thresholds,response)
-    return xp,sims
+    xp = crush_ice(response.xpath(bd),bd,thresholds,response)
+    return xp
     
-print(main('localhost:8000'))
+print(main('http://localhost:8000'))

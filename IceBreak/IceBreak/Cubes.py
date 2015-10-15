@@ -65,14 +65,12 @@ def crush_ice(r,xp,thresholds,response):
     if not layer:
         xp = xp+select_cube(r)
         r = response.xpath(xp)
-        (xp,_) = crush_ice(r,xp,thresholds,response)
+        xp = crush_ice(r,xp,thresholds,response)
     return xp
   
-def main(link,thresholds = {"similarity_threshold": 0.6,"node_threshold": 50,"average_similarity_threshold":0.7,"proportion_threshold":0.7}):
+def main(link,thresholds = {"similarity_threshold": 0.6,"node_threshold": 10,"average_similarity_threshold":0.7,"proportion_threshold":0.7}):
     r = requests.get(link)
     response = TextResponse(r.url, body=r.text, encoding='utf-8')
     bd = "//body"
     xp = crush_ice(response.xpath(bd),bd,thresholds,response)
     return xp
-    
-print(main('localhost:8000'))
